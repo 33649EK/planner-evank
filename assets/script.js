@@ -1,47 +1,60 @@
-// Wrap all code that interacts with the DOM in a call to jQuery to ensure that
-// the code isn't run until the browser has finished rendering all the elements
-// in the html.
+//Fires function when document is fully loaded
 $(document).ready(function () {
-    // TODO: Add a listener for click events on the save button. This code should
-    // use the id in the containing time-block as a key to save the user input in
-    // local storage. HINT: What does `this` reference in the click listener
-    // function? How can DOM traversal be used to get the "hour-x" id of the
-    // time-block containing the button that was clicked? How might the id be
-    // useful when saving the description in local storage?
 
+    // Displays current date and time to the page header when page initially loads
+    var dateTime = dayjs().format("MMM D, YYYY [at] hh:mm a");
+    $("#currentDay").text(dateTime);
 
-    // TODO: Add code to apply the past, present, or future class to each time
-    // block by comparing the id to the current hour. HINTS: How can the id
-    // attribute of each time-block be used to conditionally add or remove the
-    // past, present, and future classes? How can Day.js be used to get the
-    // current hour in 24-hour time?
+    //Saves text content and id of each time block to local storage
+    $('.saveBtn').click(function () {
+        // Fetches the text content of the target time block
+        var textContent = $(this).siblings().eq(1).val();
+        console.log(textContent);
+        // Fetches the id of the target time block
+        var blockId = $(this).parent('.time-block').attr('id');
+        console.log(blockId)
+        // Sets the text content to storage using the id as a key
+        localStorage.setItem(blockId, textContent);
+    });
 
-    //Fetches the current hour of the day
+    // Fetches the current hour of the day for the purpose of comparing it against
+    // time block id
     var timeOfDay = dayjs().format('[hour-]HH')
     console.log('Current hour: ' + timeOfDay)
 
     //Compares the current hour of the day to each planner div and applies a class to each
     $('.time-block').each(function () {
-        var domTimeBlock = $(this).attr('id')
-        console.log(domTimeBlock)
+        // Fetches time block id
+        var domTimeBlock = $(this).attr('id');
+        console.log(domTimeBlock);
+
+        // Determines what class to add to each block
         if (timeOfDay === domTimeBlock) {
-            $(this).addClass('present')
+            $(this).addClass('present');
         } else if (timeOfDay > domTimeBlock) {
-            $(this).addClass('past')
+            $(this).addClass('past');
         } else {
-            $(this).addClass('future')
+            $(this).addClass('future');
         }
     })
 
+    //Prints local storage
+    $('.description').each(function () {
+        // Fetches time block id
+        var blockId = $(this).parent('.time-block').attr('id');
+        // Fetches stored text content based on the blockId key
+        var storedText = localStorage.getItem(blockId);
+        console.log(storedText);
+        // If this time block has stored text, print that data to the time block
+        if (storedText) {
+            $(this).text(storedText);
+        } else {
+            $(this).text('');
+        }
+    })
 
-    // TODO: Add code to get any user input that was saved in localStorage and set
-    // the values of the corresponding textarea elements. HINT: How can the id
-    // attribute of each time-block be used to do this?
-
-
-
-
-    // TODO: Add code to display the current date in the header of the page.
-    var dateTime = dayjs().format("MMM D, YYYY [at] hh:mm a");
-    $("#currentDay").text(dateTime);
+    $('.deleteBtn').click(function () {
+        localStorage.clear()
+        location.reload()
+    })
 });
