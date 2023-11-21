@@ -50,9 +50,11 @@ $(document).ready(function () {
         $(this).text(storedText ? storedText : '');
     })
 
-    // Clears local storage and reloads page when delete button is clicked
+    // Clears local storage and text boxes when delete button is clicked
     $('.deleteBtn').click(function () {
         localStorage.clear()
-        location.reload()
+        $('.description').each(function () {
+            $(this).text('')
+        })
     })
 });
